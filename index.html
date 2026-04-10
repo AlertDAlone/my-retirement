@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คุณจะเป็นสัตว์อะไร : อนาคตในดงคอนกรีต</title>
+    <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Itim', cursive; 
+            background-color: #f0fdfa; 
+            color: #333; 
+            text-align: center; 
+            padding: 20px; 
+            transition: background-color 0.8s ease; 
+        }
+        .container { 
+            max-width: 600px; 
+            background: white; 
+            padding: 35px; 
+            border-radius: 30px; 
+            margin: auto; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08); 
+            position: relative; 
+            transition: all 0.5s ease;
+        }
+        h1 { color: #2c3e50; font-size: 28px; margin-bottom: 10px; }
+        
+        /* สไตล์อีโมจิเด้ง ๆ หน้าแรก */
+        .emoji-group {
+            font-size: 50px;
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .bouncing {
+            animation: bounce 2s infinite ease-in-out;
+            display: inline-block;
+        }
+        .bouncing:nth-child(2) { animation-delay: 0.2s; }
+        .bouncing:nth-child(3) { animation-delay: 0.4s; }
+        .bouncing:nth-child(4) { animation-delay: 0.6s; }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .question { display: none; margin-bottom: 20px; text-align: left; animation: fadeIn 0.5s; }
+        .question.active { display: block; }
+        
+        .options button { 
+            display: block; 
+            width: 100%; 
+            padding: 18px; 
+            margin: 15px 0; 
+            border: 3px solid #f0f0f0; 
+            background: #fff; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            font-size: 19px; 
+            text-align: left; 
+            font-family: 'Itim', cursive; 
+        }
+        .options button:hover { 
+            background: #fff9c4; 
+            border-color: #ffd54f; 
+            transform: scale(1.02);
+        }
+        
+        #start-screen { animation: fadeIn 0.8s; }
+        #quiz { display: none; }
+        #result-section { display: none; animation: fadeIn 1s; }
+        
+        .character-img { max-width: 100%; height: auto; display: block; margin: 0 auto; animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 20px; }
+        
+        .cta-btn { 
+            background-color: #ff7043; 
+            color: white; 
+            padding: 15px 40px; 
+            border: none; 
+            border-radius: 50px; 
+            display: inline-block; 
+            margin-top: 20px; 
+            font-weight: bold; 
+            font-size: 22px; 
+            transition: 0.3s; 
+            box-shadow: 0 8px 20px rgba(255, 112, 67, 0.3); 
+            cursor: pointer; 
+            font-family: 'Itim', cursive; 
+        }
+        .cta-btn:hover { background-color: #f4511e; transform: translateY(-3px); }
+        
+        .progress-bar { width: 100%; background-color: #eee; border-radius: 10px; margin-bottom: 30px; height: 15px; overflow: hidden; display: none; }
+        .progress { height: 100%; background-color: #4db6ac; width: 0%; transition: width 0.4s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+<audio id="bg-music" loop>
+    <source src="sound.mp3" type="audio/mpeg">
+</audio>
+
+<div class="container" id="container">
+    <h1 id="main-title">🏙️ คุณจะเป็นสัตว์อะไร...</h1>
+    <p id="subtitle" style="color: #607d8b; font-size: 20px;">ในอนาคตที่ดงคอนกรีตล้อมรอบตัวเรา?</p>
+
+    <div id="start-screen">
+        <div class="emoji-group">
+            <span class="bouncing">🐻</span>
+            <span class="bouncing">🐱</span>
+            <span class="bouncing">🦊</span>
+            <span class="bouncing">🦉</span>
+        </div>
+        <button class="cta-btn" onclick="startQuiz()">เริ่มเล่นกันเลย! ✨</button>
+    </div>
+
+    <div class="progress-bar" id="progress-container">
+        <div class="progress" id="progress-bar"></div>
+    </div>
+
+    <div id="quiz">
+        <div class="question" id="q1">
+            <h3>1. เมื่อเงินเดือนออก สิ่งแรกที่คุณทำคืออะไร?</h3>
+            <div class="options">
+                <button onclick="nextQuestion(1)">A) ช้อปปิ้ง/กินหรู ให้รางวัลชีวิตสุด ๆ!</button>
+                <button onclick="nextQuestion(4)">B) แบ่งเก็บออม หรือลงทุนทันที</button>
+                <button onclick="nextQuestion(2)">C) รีบจ่ายบิล/หนี้สินก่อนเลย</button>
+                <button onclick="nextQuestion(3)">D) สายเปย์! เลี้ยงเพื่อนและครอบครัว</button>
+            </div>
+        </div>
+
+        <div class="question" id="q2">
+            <h3>2. บ้านในฝันหลังเกษียณของคุณล่ะ?</h3>
+            <div class="options">
+                <button onclick="nextQuestion(2)">A) คอนโดในเมือง เดินทางสะดวก</button>
+                <button onclick="nextQuestion(3)">B) บ้านพักที่มีคนคอยดูแล</button>
+                <button onclick="nextQuestion(4)">C) บ้านตัวเองที่ผ่อนจบแล้วสบายใจ</button>
+                <button onclick="nextQuestion(1)">D) ยังนึกไม่ออกเลย อาจจะอยู่กับลูกหลาน</button>
+            </div>
+        </div>
+
+        <div class="question" id="q3">
+            <h3>3. เวลาเครียด คุณรับมือยังไง?</h3>
+            <div class="options">
+                <button onclick="nextQuestion(1)">A) ปล่อยจอย! ช้อปปิ้งบำบัด</button>
+                <button onclick="nextQuestion(3)">B) เม้าท์กับเพื่อน หรือหาคนช่วย</button>
+                <button onclick="nextQuestion(2)">C) ก้มหน้าก้มตาทำงานเก็บเงินต่อไป</button>
+                <button onclick="nextQuestion(4)">D) วางแผนแก้ปัญหาเป็นสเต็ป</button>
+            </div>
+        </div>
+
+        <div class="question" id="q4">
+            <h3>4. อายุ 60 ปี จะเอาเงินจากไหนมาใช้?</h3>
+            <div class="options">
+                <button onclick="nextQuestion(1)">A) เบี้ยยังชีพจากรัฐบาล</button>
+                <button onclick="nextQuestion(2)">B) ทำงานต่อไปจนกว่าจะทำไม่ไหว</button>
+                <button onclick="nextQuestion(4)">C) เงินออมและบำนาญที่วางแผนไว้</button>
+                <button onclick="nextQuestion(3)">D) หวังพึ่งพาลูกหลานที่น่ารัก</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-section">
+        <div id="character-icon" style="margin-bottom: 20px;"></div>
+        <h2 id="result-title" style="color: #d84315; font-size: 32px; margin-top: 0;"></h2>
+        <p id="result-desc" style="font-size: 20px; color: #455a64; line-height: 1.6; text-align: left; padding: 0 10px;"></p>
+        
+        <div style="background: #fff9c4; padding: 25px; border-radius: 20px; margin-top: 30px; border: 2px dashed #fbc02d; text-align: left;">
+            <p style="margin-top: 0; font-size: 22px; color: #f57f17;"><strong>🌈 อย่าปล่อยให้อนาคตเศร้า!</strong></p>
+            <p style="margin-bottom: 0; color: #5d4037; font-size: 18px;">
+                แวะมาหาคำตอบในสัมมนาวิชาการ<br>
+                <span style="font-size: 20px; font-weight: bold; color: #e65100;">"หนีวงจร แก่ จน เมือง : เตรียมเกษียณให้รอดในดงคอนกรีต"</span><br>
+                📅 23 เม.ย. 2569 | 💻 ทาง Zoom นะจ๊ะ
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentStep = 1;
+    let totalScore = 0;
+    let bgMusic = document.getElementById("bg-music");
+    bgMusic.volume = 0.3;
+
+    function startQuiz() {
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('quiz').style.display = 'block';
+        document.getElementById('progress-container').style.display = 'block';
+        document.getElementById('q1').classList.add('active');
+        bgMusic.play();
+    }
+
+    function nextQuestion(score) {
+        totalScore += score;
+        document.getElementById(`q${currentStep}`).classList.remove('active');
+        currentStep++;
+        document.getElementById('progress-bar').style.width = ((currentStep - 1) / 4) * 100 + "%";
+
+        if (currentStep <= 4) {
+            document.getElementById(`q${currentStep}`).classList.add('active');
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById('subtitle').style.display = 'none';
+        document.getElementById('progress-container').style.display = 'none';
+        document.getElementById('quiz').style.display = 'none';
+        document.getElementById('result-section').style.display = 'block';
+        document.getElementById('main-title').innerText = "แต่น แต้น แต๊น!";
+        
+        let title, desc, img, bodyCol, contCol;
+
+        if (totalScore <= 6) {
+            img = "cat.PNG";
+            title = "คุณคือ 'น้องเหมียวเป๋าแฟบ' 🐱";
+            desc = "คุณมันสาย YOLO! ใช้ชีวิตคุ้มค่าแต่กระเป๋าแอบเบา ระวังวัยเกษียณในเมืองใหญ่จะเหงาเพราะขาดเงินออมนะจ๊ะ!";
+            bodyCol = "#fce4ec"; contCol = "#f8bbd0";
+        } else if (totalScore <= 9) {
+            img = "bear.PNG";
+            title = "คุณคือ 'พี่หมีเดอะแบก' 🐻";
+            desc = "สู้เพื่อทุกคนจนไหล่ทรุด! อย่าลืมแบ่งเงินมาดูแลตัวเองบ้าง ก่อนที่ร่างจะพังในดงคอนกรีตนะ!";
+            bodyCol = "#efebe9"; contCol = "#d7ccc8";
+        } else if (totalScore <= 12) {
+            img = "fox.PNG";
+            title = "คุณคือ 'สุนัขจิ้งจอกสายสังคม' 🦊";
+            desc = "เอาตัวรอดเก่ง เพื่อนเยอะ! แต่เรื่องที่อยู่ถาวรหลังเกษียณต้องรีบวางแผนหน่อยนะ เดี๋ยวจะหาว่าจิ้งจอกไม่เตือน!";
+            bodyCol = "#fff3e0"; contCol = "#ffe0b2";
+        } else {
+            img = "owl.PNG";
+            title = "คุณคือ 'นกฮูกนักวางแผน' 🦉";
+            desc = "นิ่ง สงบ สยบทุกรายจ่าย! แพลนแน่นมาก แต่ระวังค่าครองชีพเมืองกรุงที่พุ่งแรงจนแผนสะดุดล่ะ!";
+            bodyCol = "#e3f2fd"; contCol = "#bbdefb";
+        }
+
+        document.getElementById('character-icon').innerHTML = `<img src="${img}" alt="${title}" class="character-img">`;
+        document.getElementById('result-title').innerText = title;
+        document.getElementById('result-desc').innerText = desc;
+        document.body.style.backgroundColor = bodyCol;
+        document.getElementById('container').style.backgroundColor = contCol;
+    }
+</script>
+
+</body>
+</html>
